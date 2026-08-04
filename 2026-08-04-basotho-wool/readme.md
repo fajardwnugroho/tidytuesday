@@ -1,8 +1,9 @@
-# Basotho Wool: The Seasonal Rhythm of Lesotho's Most Valuable Export
+# Basotho Wool: Who Buys It, and What Drives Its Price
 
 > A business-oriented TidyTuesday analysis (2026-08-04) of Lesotho's wool trade,
-> using UN Comtrade mirror-trade data. The question at the heart of it: *when* does
-> the money flow, *who* really buys, and *what* moves the price?
+> using UN Comtrade mirror-trade data. Two questions at the heart of it: *who*
+> really buys the wool — the gateway or the end consumer — and *what* moves the
+> money — price or volume.
 
 ## Dataset
 
@@ -15,74 +16,62 @@
 
 ## Business Questions
 
-1. **Seasonality** — When does Basotho wool export revenue trough and peak? Is the
-   low season really *winter*, or does it start earlier?
-2. **Top importer** — Is South Africa the true buyer, or a *gateway* for
-   higher-value demand from China?
-3. **Trend** — How has the price per kilogram moved from 2010 to 2024?
+1. **Who really buys Basotho wool?** Is South Africa the true customer, or a
+   *gateway* that funnels wool on to higher-value buyers like China?
+2. **What drives the value of the trade?** Is revenue growth explained by price
+   per kilogram, by volume exported, or by both?
 
 ## Methodology
 
 - HS 5101 only (2 rows of waste wool dropped). Mirror-trade imports, USD.
 - Value backbone: `primary_value`, falling back to `fobvalue` where China's primary
   value is missing (51/91 rows).
-- Seasonality restricted to **South Africa on complete years** (2010-15, 2017,
-  2021-24), the only reporter with reliable monthly coverage.
+- Trend analysis uses the **South Africa** series — the only reporter with reliable
+  monthly coverage. India's unit price is excluded (reporting artifact).
 - Full pipeline in `analysis.R`; rendered report in `report.qmd`.
 
 ## Key Findings
 
-### 1. The low season runs autumn to winter, not winter alone
+### 1. South Africa is the gateway; China is the high-value destination
 
-![Seasonal profile](figures/fig_01_seasonal_profile.png)
+![Gateway vs destination](figures/fig_01_gateway_vs_destination.png)
 
-*Alt text: Line and ribbon chart of the mean monthly value of Basotho wool imports
-reported by South Africa across 11 complete years. Value is high in January ($2.8M),
-falls to a trough of about $0.17M in April, stays below $0.4M through August (the
-shaded winter window), then surges to a November peak of $4.6M.*
+*Alt text: Two-panel bar chart. Top: cumulative volume imported (M kg) — South
+Africa 63.1, China 24.2, India ~0, Uruguay ~0. Bottom: price paid (USD/kg) — China
+7.16, South Africa 4.47, Uruguay 4.29. India is omitted from the price panel because
+its unit price is a data artifact.*
 
-Revenue follows a steep seasonal curve: **Jan $2.8M → Apr trough $0.2M → flat
-Apr-Aug → Oct-Nov peak $4.6M**. The quiet period starts in **autumn (April)**, not
-winter — it matches the industry calendar (spring shearing, winter gathering, and
-Port Elizabeth auctions in spring/summer). Cash-flow is tightest from **April to
-August**, exactly when financing is most needed.
+South Africa takes **72% of volume (63.1 of 87.4 M kg)** at the **lowest price**
+($4.47/kg); China takes 24.2 M kg at **$7.16/kg — about 60% more per kilo**. South
+Africa is not the end market — wool is auctioned in **Port Elizabeth** before
+re-export. The real demand signal lives in China and the auction floor.
 
-### 2. South Africa is the gateway; China is the high-value destination
+### 2. Price, not volume, is the swing factor
 
-![Gateway vs destination](figures/fig_02_gateway_vs_destination.png)
+![Price vs volume trend](figures/fig_02_price_volume_trend.png)
 
-*Alt text: Dumbbell chart of each importer's share of cumulative value vs volume.
-South Africa holds 60% of reported value but 72% of volume; China holds 37% of value
-but 28% of volume and pays about $7.16/kg versus South Africa's $4.47.*
+*Alt text: Dual-axis line chart, 2010-2024. Blue line (left axis) shows price per
+kg falling from $4.56 (2010) to a 2013 crash low of $1.12, recovering to ~$6 by
+2017, dipping to $4.04 in COVID 2020, then plateauing at $6.4-6.6. Red triangles
+(right axis) show volume rising from 0.88 M kg (2010) to ~5.3 M kg (2013) then
+stabilising near 5-6 M kg. Grey shading marks partial-reporting years (2016,
+2018-20).*
 
-South Africa is not the end customer — wool is auctioned in **Port Elizabeth** before
-re-export. Its 72% of volume at the *lowest* price per kg ($4.47) marks it as the
-**gateway**. China's 24M kg arrives at a **60% higher price** ($7.16/kg), the real
-signal of demand for quality fibre.
-
-### 3. Prices crashed in 2013 and plateaued above $6/kg
-
-![Price per kg trend](figures/fig_03_price_per_kg_trend.png)
-
-*Alt text: Line chart of the annual average price of Basotho wool (South Africa)
-2010-2024. Price falls to a 2013 low of $1.12/kg, recovers to ~$6 by 2017, dips to
-$4.04 in COVID 2020, then plateaus at $6.4-6.6 through 2024. Export value grew from
-$4M (2010) to ~$38M (2024).*
-
-Price is the dominant lever: a $6.5 → $4 fall would erase roughly **$150M of export
-value** at current volumes. The post-2020 plateau is worth protecting via quality
-certification and auction positioning.
+Volume grew six-fold to 2013 then went flat; the **2013 crash was a price event**.
+Since then, **nearly all of the ~9x revenue growth ($4M → $38M) came from price
+recovery**, not more wool. A price fall from $6.5 to $4 would erase ~$150M of
+export value at current volumes.
 
 ## Recommendations
 
-1. **Finance the trough** — seasonal working-capital lines for herders and traders
-   covering April-August, when auction receipts are three months away.
-2. **Track China, not just South Africa** — monitor Chinese import volumes and
-   Port Elizabeth auction prices as the leading demand indicators.
-3. **Defend the price premium** — quality testing and certification underpin the
-   difference between $4.5 and $7/kg.
-4. **Harden the data** — China's primary value is 51% missing and non-SA reporting
-   is patchy; consistent CIF/FOB conventions would improve comparisons.
+1. **Read the gateway correctly** — track China and Port Elizabeth auction prices,
+   not just South African volumes; market on value-per-kg quality.
+2. **Defend the price premium** — certification is the difference between $4.5 and
+   $7/kg; protect the $6.5 plateau.
+3. **Hedge the price cycle** — forward selling and auction-floor risk management
+   stabilise herders' incomes against swings like 2013 and 2020.
+4. **Harden the data** — China's primary value is 51% missing; consistent CIF/FOB
+   conventions would improve comparisons.
 
 ## Reproducibility
 
@@ -90,7 +79,7 @@ certification and auction positioning.
 source("analysis.R")   # regenerates outputs/ and figures/
 ```
 
-- `analysis.R` — cleaning, summary tables (`outputs/`), and three figures (`figures/`).
+- `analysis.R` — cleaning, summary tables (`outputs/`), and both figures (`figures/`).
 - `report.qmd` — the full rendered report (needs Quarto).
 - Data: `data/basotho_wool.csv`.
 
