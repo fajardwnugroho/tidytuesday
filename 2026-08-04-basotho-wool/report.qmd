@@ -1,5 +1,5 @@
 ---
-title: "Who Buys Basotho Wool, and What Drives Its Price"
+title: "What Drives the Price of Basotho Wool"
 author: "TidyTuesday | 2026-08-04"
 date: "2026-08-04"
 format:
@@ -19,7 +19,6 @@ execute:
 knitr::opts_chunk$set(fig.width = 9.5, fig.height = 4.8, out.width = "100%")
 library(dplyr)
 library(readr)
-reporter_totals <- read_csv("outputs/reporter_totals.csv", show_col_types = FALSE)
 sa_price_trend  <- read_csv("outputs/sa_price_trend.csv", show_col_types = FALSE)
 ```
 
@@ -32,14 +31,12 @@ season alone, roughly **M800 million** entered the country through wool and moha
 sales (GroundUp News).
 
 This report uses mirror trade statistics from the **UN Comtrade Database** (imports
-of Lesotho wool reported by the importing countries) to answer two business
-questions about the industry.
+of Lesotho wool reported by the importing countries) to answer one business
+question about the industry.
 
-## Business Questions
+## Business Question
 
-1. **Who really buys Basotho wool?** Is South Africa the true customer, or a
-   *gateway* that funnels wool on to higher-value buyers like China?
-2. **What drives the value of the trade?** Is revenue growth explained by price
+1. **What drives the value of the trade?** Is revenue growth explained by price
    per kilogram, by the volume exported, or by both?
 
 ## Data & Methodology
@@ -69,59 +66,11 @@ monthly_coverage |>
 
 > **Data quality note.** Only **South Africa** reports all 12 months in most years.
 > China and India have patchy coverage and Uruguay appears in just 2 rows. The
-> trend analysis therefore uses the South Africa series, and the reporter totals
-> are treated separately. India's unit price is excluded from the price chart
-> because it is a reporting artifact, not an economic signal. No causal claims are
-> made — these are mirror-trade aggregations.
+> trend analysis therefore uses the South Africa series, which is treated as a
+> proxy for Lesotho's wool exports. No causal claims are made — these are
+> mirror-trade aggregations.
 
-## Finding 1 — South Africa is the gateway; China is the high-value destination
-
-```{r fig1}
-knitr::include_graphics("figures/fig_01_gateway_vs_destination.png")
-```
-
-*Alt text: Two-panel bar chart. Top panel, cumulative volume imported 2010-2024
-(M kg): South Africa 63.1, China 24.2, India 0.0, Uruguay 0.0. Bottom panel, price
-paid (USD per kg): China 7.16, South Africa 4.47, Uruguay 4.29. India is omitted
-from the price panel because its unit price is a data artifact.*
-
-```{r table-totals}
-reporter_totals |>
-  mutate(
-    `Value ($M)` = round(value_M, 1),
-    `Volume (M kg)` = round(qty_Mkg, 1),
-    `USD per kg` = round(price_per_kg, 2),
-    `Value share` = paste0(round(value_share, 1), "%"),
-    `Volume share` = paste0(round(qty_share, 1), "%")
-  ) |>
-  select(`Reporter` = reporter_desc, `Value ($M)`, `Volume (M kg)`,
-         `USD per kg`, `Value share`, `Volume share`) |>
-  knitr::kable()
-```
-
-### Observation
-
-South Africa takes the overwhelming majority of volume — **63.1 of 87.4 M kg
-(72%)** — yet pays the **lowest price per kg among the meaningful buyers**
-($4.47, versus China's $7.16). China takes a smaller 24.2 M kg but pays roughly
-**60% more per kilogram**.
-
-### Interpretation
-
-South Africa is not the end market. Nearly all Lesotho wool is *tested and auctioned
-in Port Elizabeth* before being re-exported, which is why it appears as the dominant
-"importer" while paying less per kilogram. China, feeding the global wool-processing
-industry, buys a smaller volume but at higher value — the true destination for
-quality fibre.
-
-### Business Impact
-
-Chasing "South Africa" as the customer misreads the market. For exporters the real
-demand signal lives in **China's buying behaviour and Port Elizabeth auction
-prices**. Marketing and diversification strategy should target processors and
-quality-conscious buyers, not the trans-shipment hub.
-
-## Finding 2 — Price, not volume, is the swing factor
+## Finding 1 — Price, not volume, is the swing factor
 
 ```{r fig2}
 knitr::include_graphics("figures/fig_02_price_volume_trend.png")
@@ -172,24 +121,21 @@ matters far more to Lesotho's wool income than chasing further volume growth.
 
 ## Recommendations
 
-1. **Read the gateway correctly.** Monitor Chinese import volumes and Port
-   Elizabeth auction prices as the leading demand indicators; build marketing
-   around **value-per-kg quality positioning** rather than tonnage.
-2. **Defend the price premium.** Wool testing and certification (already
+1. **Defend the price premium.** Wool testing and certification (already
    performed at Port Elizabeth) are the difference between $4.5 and $7/kg. Invest
    in the quality pipeline and branding to protect the $6.5 plateau.
-3. **Hedge the price cycle.** With volume flat, forward-selling and auction-floor
+2. **Hedge the price cycle.** With volume flat, forward-selling and auction-floor
    risk management are the tools that stabilise herders' incomes against price
    swings like 2013 and 2020.
-4. **Harden the data.** China's primary value is 51% missing and non-SA reporting
+3. **Harden the data.** China's primary value is 51% missing and non-SA reporting
    is patchy. Consistent CIF/FOB conventions and fuller reporting would make
    cross-country comparisons more reliable.
 
 ## Reproducibility
 
-- `analysis.R` — full pipeline: cleaning, summary tables, and both figures.
+- `analysis.R` — full pipeline: cleaning, summary tables, and the figure.
 - `outputs/*.csv` — coverage, reporter totals, and the South Africa trend.
-- `figures/*.png` — the two charts above (also rendered inline).
+- `figures/*.png` — the chart above (also rendered inline).
 - Data: `data/basotho_wool.csv` (UN Comtrade mirror trade, HS 5101).
 
 Run everything with:
