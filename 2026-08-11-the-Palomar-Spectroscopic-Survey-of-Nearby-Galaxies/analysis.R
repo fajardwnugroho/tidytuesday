@@ -118,7 +118,9 @@ fig_01 <- ggplot(bpt, aes(x, y)) +
     y = expression("log[OIII]/H"*beta~"   (ionising power)"),
     title = str_wrap("Two emission-line ratios separate star-forming galaxies from black holes",
                      60),
-    caption = "408 nuclei from Ho, Filippenko & Sargent (1997). Dashed lines: theoretical starburst limits — star formation lives below Kauffmann (2003); luminous AGN above Kewley (2001). Faded points carry an uncertain classification."
+    caption = str_wrap(
+      "408 nuclei from Ho, Filippenko & Sargent (1997). Dashed lines: theoretical starburst limits — star formation lives below Kauffmann (2003); luminous AGN above Kewley (2001). Faded points carry an uncertain classification.",
+      90)
   ) +
   theme_minimal(base_size = 13) +
   theme(
@@ -163,7 +165,9 @@ fig_02 <- ggplot(strip, aes(morphology, share, fill = activity_type)) +
     y = "Share of galaxies",
     title = str_wrap("Early-type galaxies hide black holes; late types make stars",
                      60),
-    caption = "n = number of galaxies in each cell (labelled). Early Hubble types (E, S0) are dominated by LINER/AGN nuclei; late types (Sc, Sm, Im) by star-forming H II nuclei."
+    caption = str_wrap(
+      "n = number of galaxies in each cell (labelled). Early Hubble types (E, S0) are dominated by LINER/AGN nuclei; late types (Sc, Sm, Im) by star-forming H II nuclei.",
+      100)
   ) +
   theme_minimal(base_size = 13) +
   theme(
@@ -215,7 +219,9 @@ fig_03 <- ggplot(ladder, aes(activity_type, velocity_dispersion_km_s,
     y = "Stellar velocity dispersion (km/s)",
     title = str_wrap("The most energetic nuclei sit in the most massive galaxies",
                      60),
-    caption = "log scale. sigma traces central black-hole mass via the M-sigma relation. White dots: medians (H II ~70, Transition ~134, Seyfert ~149, LINER ~168 km/s)."
+    caption = str_wrap(
+      "log scale. sigma traces central black-hole mass via the M-sigma relation. White dots: medians (H II ~70, Transition ~134, Seyfert ~149, LINER ~168 km/s).",
+      105)
   ) +
   theme_minimal(base_size = 13) +
   theme(
