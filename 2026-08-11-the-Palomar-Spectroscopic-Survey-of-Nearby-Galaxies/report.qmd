@@ -1,0 +1,179 @@
+---
+title: "Half of Nearby Galaxies Hide an Active Black Hole"
+author: "TidyTuesday | 2026-08-11"
+date: "2026-08-11"
+format:
+  html:
+    toc: true
+    toc-title: Contents
+    toc-depth: 2
+    code-fold: true
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 8.5, fig.height = 6, out.width = "100%")
+library(readr)
+library(dplyr)
+key <- read_csv("outputs/key_numbers.csv", show_col_types = FALSE)
+kv <- function(m) as.numeric(key$value[key$metric == m])
+```
+
+## Introduction
+
+Point a spectrograph at the centre of a nearby galaxy and — around **half the time** —
+you will find a **supermassive black hole actively swallowing matter**. That was the
+surprise of the *Palomar Spectroscopic Survey of Nearby Galaxies*: in the 1990s,
+astronomers used the 200-inch Hale Telescope — then the world's largest — to split the
+light of 486 galaxy nuclei into spectra and classify what powered each one (Ho,
+Filippenko & Sargent 1995, 1997, 2009).
+
+This report explores the collected data with three questions, all of which turn into
+clear, standalone visuals.
+
+## The Three Questions
+
+1. **Can two emission-line ratios separate star-forming galaxies from black holes?**
+   The famous **BPT diagram** ([Baldwin, Phillips & Terlevich 1981](https://ned.ipac.caltech.edu/level5/Glossary/Essay_bpt.html));
+2. **Does a galaxy's *shape* predict what happens at its centre?** — morphology vs.
+   nuclear activity along the Hubble sequence;
+3. **Do more massive galaxies host more active nuclei?** — stellar velocity
+   dispersion (a black-hole-mass proxy) vs. activity type.
+
+## Data & Methodology
+
+- **Source:** Palomar Spectroscopic Survey, via [VizieR](https://vizier.cds.unistra.fr/viz-bin/VizieR-2?-source=J/ApJS/112/315)
+  (Ho, Filippenko & Sargent 1995, 1997, 2009).
+- **Probe:** optical emission-line spectra of `r key$value[key$metric=="n_galaxies"]`
+  galaxy nuclei taken with the Hale Telescope.
+- **Classification:** each nucleus is typed as **H II** (star formation), **Seyfert**
+  (luminous AGN), **LINER** (low-ionisation AGN), **Transition** (composite), or
+  **Absorption**. `r key$value[key$metric=="n_classified"]` nuclei are classified;
+  `r key$value[key$metric=="n_unclassified"]` lack detectable emission lines.
+- **BPT ratios:** the dataset's `log_*` columns are *linear* intensity ratios, not
+  logarithms — `log10()` is applied here to build the diagram (see `analysis.R`).
+
+```{r classification-table}
+classification_counts <- read_csv("outputs/classification_counts.csv",
+                                  show_col_types = FALSE)
+classification_counts |> knitr::kable()
+```
+
+> **Data quality note.** About `r round(100 * as.numeric(key$value[key$metric=="n_unclassified"]) / 486) `% of
+> survey galaxies have no emission lines and cannot be classified. Roughly one in
+> five classifications is flagged *uncertain* or *very uncertain* — these are drawn
+> faded in Figure 1. No physical claims beyond the reported classifications: this is
+> a demographics snapshot of the local universe.
+
+## Finding 1 — Two line ratios split star formation from black holes
+
+```{r fig1}
+knitr::include_graphics("figures/fig_01_bpt_diagram.png")
+```
+
+*Alt text: BPT diagnostic diagram, 406 nuclei, log[NII]/H-alpha on the x-axis and
+log[OIII]/H-beta on the y-axis. Points coloured by activity type: blue H II galaxies
+form a cloud at lower left; red Seyferts a spur at upper right; orange LINERs scatter
+to the right; green transitions sit between. Two dashed boundary curves cut the plane;
+uncertain galaxies are paler.*
+
+The diagram works like a referee: it separates **photoionisation by young stars**
+(H II regions) from **photoionisation by a black hole's accretion disk** (AGN). The
+*ionising power* axis (y) is what does the heavy lifting:
+
+- **Seyfert nuclei** cluster at the top — median `r round(as.numeric(key$value[key$metric=="bpt_med_seyfert"]), 2)` in
+  log[OIII]/Hβ, the signature of hard, energetic radiation;
+- **H II galaxies** sit at the bottom-left at `r round(as.numeric(key$value[key$metric=="bpt_med_hii"]), 2)` — soft,
+  stellar radiation;
+- **LINERs** occupy the right-hand side: enough gas to glow, but too little ionising
+  power to be a classic active nucleus.
+
+The dashed boundaries (Kauffmann 2003 / Kewley 2001) are theoretical limits: nearly
+all star-forming galaxies fall *below* the blue line, and *above* the purple line
+star formation is no longer a plausible engine.
+
+## Finding 2 — Shape predicts destiny
+
+```{r fig2}
+knitr::include_graphics("figures/fig_02_hubble_sequence.png")
+```
+
+*Alt text: 100% stacked horizontal bars along the Hubble sequence (Elliptical,
+Lenticular, Spiral, Barred spiral, Irregular). Segments coloured by activity type,
+with per-cell galaxy counts labelled. Early-type galaxies are dominated by orange
+LINER segments; late types by blue H II.*
+
+| Morphology        | Dominant nucleus   | Share   |
+|:------------------|:-------------------|:--------|
+| Elliptical        | LINER (AGN)        | **73%** |
+| Lenticular (S0)   | LINER / Transition | 42% / 34% |
+| Spiral            | H II (star-forming)| **59%** |
+| Barred spiral     | H II               | 55%     |
+| Irregular         | H II               | 100%    |
+
+Scrolling along the Hubble sequence, the galaxy's *soul* changes: **early-type,
+gas-poor systems (E, S0) host quiet, low-luminosity AGN (LINERs), while late-type,
+gas-rich systems (spirals, irregulars) are full of young stars**. This is a
+demographics result of the local universe — most galaxies are either "asleep
+giants" or "star factories", with relatively few in between.
+
+## Finding 3 — Bigger galaxies, busier black holes
+
+```{r fig3}
+knitr::include_graphics("figures/fig_03_mass_ladder.png")
+```
+
+*Alt text: vertical violin plots of stellar velocity dispersion (log scale) by
+activity type, ordered H II, Transition, Seyfert, LINER. Filled by activity colour
+with jittered points; white dots mark medians (70, 135, 149, 167 km/s). Dispersion
+rises from H II to LINER.*
+
+The **M-sigma relation** ties a galaxy's central black-hole mass to its stellar
+velocity dispersion: measure σ and you have a handle on the black hole. Splitting the
+sample by activity reveals a clean ladder:
+
+- **H II (star-forming)** nuclei live in the *lightest* galaxies — median
+  `r key$value[key$metric=="sigma_hii"]` km/s;
+- **LINER** nuclei, in the *heaviest* — median `r key$value[key$metric=="sigma_liner"]` km/s;
+- **Seyferts** and transitions sit between
+  (`r key$value[key$metric=="sigma_seyfert"]` and
+  `r key$value[key$metric=="sigma_transition"]` km/s).
+
+More massive galaxy → more massive black hole → a more energetic (or at least more
+recognisable) active nucleus. Exactly the demographics the Palomar team reported by eye
+in 1997, now visible in one panel.
+
+## The Big Picture
+
+Put the three figures back together: **black holes are not rare**. Around
+`r round(100 * as.numeric(key$value[key$metric=="n_agn_any"]) / as.numeric(key$value[key$metric=="n_classified"]))`%
+of nearby galaxies show some AGN signature (Seyfert, LINER, or transition) against
+**`r round(100 * as.numeric(key$value[key$metric=="n_hii"]) / as.numeric(key$value[key$metric=="n_classified"]))`%**
+pure star formation. The engine sits in the galaxy's centre, and how we see it depends
+on *how massive* the system is and *how much gas* is left to feed it.
+
+## Reproducibility
+
+- `analysis.R` — full pipeline: cleaning, morphology binning, and all three figures.
+- `outputs/` — `key_numbers.csv` (all headline statistics) and `hubble_strip.csv`.
+- `figures/*.png` — the three charts above.
+- Data: `palomar_survey.csv`, `palomar_emission_lines.csv`
+  (TidyTuesday 2026-08-11, via VizieR).
+
+Run everything with:
+
+```{r repro, eval = FALSE}
+source("analysis.R")   # regenerates outputs/ and figures/
+```
+
+## Data Credit
+
+- **Dataset:** TidyTuesday (2026-08-11) — curated by [Tony Galvan, Golden Dome
+  Data Science](https://github.com/gdatascience).
+- **Original source:** Ho, Filippenko & Sargent (1995, 1997, 2009),
+  [VizieR catalogs](https://vizier.cds.unistra.fr/viz-bin/VizieR-2?-source=J/ApJS/112/315).
+  Classification paper: [ApJS 112, 315](https://arxiv.org/abs/astro-ph/9704108).
