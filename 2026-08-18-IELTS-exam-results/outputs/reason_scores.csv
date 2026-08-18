@@ -1,0 +1,12 @@
+reason,score,category
+For registration as a doctor,7.16185643038895,Medical registration
+For professional registration (NOT medical),6.886977415345227,Professional
+For registration as a dentist,6.681238108619902,Medical registration
+For registration as a nurse (including CGFNS),6.631697089769239,Medical registration
+For immigration,6.436257188133892,Immigration
+For employment,6.424482516125376,Employment
+For other education purposes,6.237373889523476,Education
+For higher education extended course (three months or more),6.209977232345573,Education
+(Other),6.168756329019538,Other
+For personal reasons,6.1078688863037955,Other
+For higher education short course (three months or less),6.009900563161863,Education

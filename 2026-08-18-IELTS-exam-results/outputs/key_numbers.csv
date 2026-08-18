@@ -1,0 +1,22 @@
+metric,value
+languages,46
+nationalities,58
+german_score,7.61
+english_score,6.93
+english_rank,4
+pct_writing_worst,83
+writing_mean_acad,6.05
+listening_mean_acad,6.65
+acad_overall,6.47
+gt_overall,6.2
+reason_top_score,7.16
+reason_top_name,For registration as a doctor
+reason_bot_score,6.01
+reason_bot_name,For higher education short course (three months or less)
+acad_year_min,6.45
+acad_year_max,6.51
+japanese_score,5.86
+arabic_score,5.93
+gt_reading_mean,6.02
+gt_writing_mean,6.03
+n_bands,12
